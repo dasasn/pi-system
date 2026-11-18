@@ -1,0 +1,58 @@
+{
+ "target": "https://siak.husadagemilang.ac.id",
+ "host": "siak.husadagemilang.ac.id",
+ "fingerprint": {
+  "url": "https://siak.husadagemilang.ac.id/user/login",
+  "code": 200,
+  "server": "Apache/2.4.29 (Ubuntu)",
+  "powered": "PHP/5.6.40",
+  "title": "Login SIAk STIKES - Public",
+  "tech": [],
+  "len": 2112,
+  "php": "/PHP/5.6.40"
+ },
+ "exposures": [
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/.git/HEAD",
+   "sev": "high",
+   "code": 200,
+   "len": 23
+  },
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/.git/config",
+   "sev": "high",
+   "code": 200,
+   "len": 265
+  },
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/.git/index",
+   "sev": "critical",
+   "code": 200,
+   "len": 267661
+  },
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/.git/logs/HEAD",
+   "sev": "medium",
+   "code": 200,
+   "len": 6813
+  },
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/.DS_Store",
+   "sev": "low",
+   "code": 200,
+   "len": 8196
+  }
+ ],
+ "cpanel": [],
+ "verdict": "hot"
+}

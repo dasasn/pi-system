@@ -1,0 +1,6 @@
+[Unit]
+Description=free-pi upkeep
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -lc 'if [ -f "$HOME/.free-pi/bin/bundle-patch.cjs" ]; then node "$HOME/.free-pi/bin/bundle-patch.cjs"; fi; bash "$HOME/.free-pi/state/maint.sh" --quiet'

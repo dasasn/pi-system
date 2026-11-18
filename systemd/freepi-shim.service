@@ -1,0 +1,13 @@
+[Unit]
+Description=Shim API free-pi ke bitllm lokal (tanpa iklan)
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python3 %h/.free-pi/bin/freepi-shim.py
+Restart=always
+RestartSec=5
+Environment=SHIM_PORT=7799
+
+[Install]
+WantedBy=default.target

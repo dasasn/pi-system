@@ -1,0 +1,6 @@
+[Unit]
+Description=Restore operator rules and skill links from ~/.agent-rules
+
+[Service]
+Type=oneshot
+ExecStart=%h/.agent-rules/rules-guard.sh

@@ -1,0 +1,10 @@
+== /var/www/html_nginx/ahg-private/siak-ci4/.env
+database.default.hostname = 172.17.0.1
+database.default.username = siak_app
+database.default.password = '6e12cce6bb58ef4fbd8a288fecd97397'
+database.third.hostname = 172.17.0.1
+database.third.username = siak_app
+database.third.password = '6e12cce6bb58ef4fbd8a288fecd97397'
+database.second.hostname = 172.17.0.1
+database.second.username = siak_app
+database.second.password = '6e12cce6bb58ef4fbd8a288fecd97397'

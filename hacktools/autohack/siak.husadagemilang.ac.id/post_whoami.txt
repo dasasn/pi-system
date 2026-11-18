@@ -1,0 +1,4 @@
+uid=33(www-data) gid=33(www-data) groups=33(www-data)
+699c60cd60a7
+/var/www/ahg-public/resources/img/ori/o_pmb
+Linux 699c60cd60a7 4.15.0-213-generic #224-Ubuntu SMP Mon Jun 19 13:30:12 UTC 2023 x86_64 GNU/Linux

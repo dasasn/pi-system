@@ -1,0 +1,22 @@
+{
+  "$schema": "https://pi.dev/schemas/models.schema.json",
+  "providers": {
+    "ollama": {
+      "baseUrl": "http://127.0.0.1:7778/v1",
+      "api": "openai-completions",
+      "apiKey": "ollama",
+      "models": [
+        {
+          "id": "deepseek-v4.1-flash-1017-heretic",
+          "name": "bitllm local deepseek (uncensored)",
+          "section": "defense"
+        },
+        {
+          "id": "junmo-k/GLM-5.3-Flash-FP4-Local-Piecrust-Abliterated-MLX",
+          "name": "bitllm local GLM (abliterated)",
+          "section": "defense"
+        }
+      ]
+    }
+  }
+}

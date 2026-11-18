@@ -1,0 +1,11 @@
+[
+ {
+  "action": "https://siak.husadagemilang.ac.id/index.php/user/ext_login",
+  "method": "POST",
+  "names": [
+   "logUsername",
+   "logPassword"
+  ],
+  "file": false
+ }
+]

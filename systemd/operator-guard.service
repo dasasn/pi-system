@@ -1,0 +1,6 @@
+[Unit]
+Description=Restore locked OpenCode operator config
+
+[Service]
+Type=oneshot
+ExecStart=%h/.config/opencode/.lock/operator-guard.sh

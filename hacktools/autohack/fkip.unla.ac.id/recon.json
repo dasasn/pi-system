@@ -1,0 +1,26 @@
+{
+ "target": "https://fkip.unla.ac.id",
+ "host": "fkip.unla.ac.id",
+ "fingerprint": {
+  "url": "https://fkip.unla.ac.id/",
+  "code": 200,
+  "server": "nginx",
+  "powered": "",
+  "title": "BERANDA - FKIP | Universitas Langlangbuana",
+  "tech": [],
+  "len": 27225,
+  "php": ""
+ },
+ "exposures": [
+  {
+   "phase": "recon",
+   "what": "exposure",
+   "path": "/adminer.php",
+   "sev": "medium",
+   "code": 200,
+   "len": 2842
+  }
+ ],
+ "cpanel": [],
+ "verdict": "warm"
+}

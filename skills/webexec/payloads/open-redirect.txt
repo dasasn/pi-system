@@ -1,0 +1,12 @@
+https://evil.example
+//evil.example
+\/\/evil.example
+https:evil.example
+//evil.example/%2f..
+https://target.com@evil.example
+https://evil.example#@target.com
+https://evil.example?target.com
+http://evil.example\@target.com
+//evil.example/../
+javascript:alert(1)
+data:text/html,<script>alert(1)</script>

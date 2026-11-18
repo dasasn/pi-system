@@ -1,0 +1,44 @@
+{
+ "target": "https://aas.ac.id",
+ "host": "aas.ac.id",
+ "fingerprint": {
+  "url": "https://aas.ac.id/",
+  "code": 200,
+  "server": "cloudflare",
+  "powered": "",
+  "title": "ASS - Akupunktur Surabaya",
+  "tech": [
+   "wordpress"
+  ],
+  "len": 111710,
+  "php": ""
+ },
+ "exposures": [],
+ "cpanel": [
+  {
+   "phase": "recon",
+   "what": "cpanel",
+   "port": 2083,
+   "scheme": "https",
+   "code": 200,
+   "server": "cloudflare"
+  },
+  {
+   "phase": "recon",
+   "what": "cpanel",
+   "port": 2087,
+   "scheme": "https",
+   "code": 200,
+   "server": "cloudflare"
+  },
+  {
+   "phase": "recon",
+   "what": "cpanel",
+   "port": 2096,
+   "scheme": "https",
+   "code": 200,
+   "server": "cloudflare"
+  }
+ ],
+ "verdict": "warm"
+}

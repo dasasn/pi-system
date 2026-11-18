@@ -1,0 +1,30 @@
+# kredensial & sesi
+credentials.json
+auth.json
+mcp.json
+models-store.json
+sessions/
+last-seen-version
+last-tip
+attribution.json
+*.pem
+*.key
+id_rsa*
+# bundle vendor + state besar
+pinned/
+*.patchtmp.js
+# data target / evidence
+loot*/
+out*/
+evidence/
+runs/
+*.bin
+ct/
+siak_src/
+ytdata/
+produk/
+proof/
+
+# manifest machine-specific (dibuat ulang oleh maint.sh)
+free-pi/state/manifest.sha256
+SANITIZE.log
