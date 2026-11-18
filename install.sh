@@ -52,6 +52,32 @@ systemctl --user enable --now pi-maintenance.timer 2>/dev/null || true
 
 # 6. patch bundle yang terpasang
 node "$H/.free-pi/bin/bundle-patch.cjs" --newest || true
+
+# 6b. buat pin dari bundle yang sudah dipatch (sumber kebenaran wrapper)
+PKGDIR=""
+for cand in \
+  "$(npm root -g 2>/dev/null || true)/free-pi-cli" \
+  "$H/.local/lib/node_modules/free-pi-cli" \
+  /usr/local/lib/node_modules/free-pi-cli \
+  /usr/lib/node_modules/free-pi-cli; do
+  if [ -n "$cand" ] && [ -f "$cand/dist/main-7sxf1v5b.js" ]; then PKGDIR="$cand"; break; fi
+done
+if [ -z "$PKGDIR" ] && [ -d "$H/.nvm/versions/node" ]; then
+  cand="$(find "$H/.nvm/versions/node" -maxdepth 6 -type d -name free-pi-cli -path "*/lib/node_modules/*" 2>/dev/null | head -1 || true)"
+  [ -n "$cand" ] && [ -f "$cand/dist/main-7sxf1v5b.js" ] && PKGDIR="$cand"
+fi
+if [ -n "$PKGDIR" ] && [ -f "$PKGDIR/dist/main-7sxf1v5b.js" ]; then
+  mkdir -p "$H/.free-pi/state/pinned"
+  cp -f "$PKGDIR/dist/main-7sxf1v5b.js" "$H/.free-pi/state/pinned/main-7sxf1v5b.js"
+  if ! grep -q 'main-qn3gsj3n.js.LICENSE.txt' "$H/.free-pi/state/pinned/main-7sxf1v5b.js"; then
+    printf '/*! For license information please see main-qn3gsj3n.js.LICENSE.txt */\n' >>"$H/.free-pi/state/pinned/main-7sxf1v5b.js"
+  fi
+  ( cd "$H/.free-pi/state" && sha256sum pinned/main-7sxf1v5b.js >manifest.sha256 ) || true
+  echo "pin dibuat: $(sha256sum "$H/.free-pi/state/pinned/main-7sxf1v5b.js" | cut -c1-16) dari $PKGDIR"
+else
+  echo "peringatan: paket free-pi-cli tidak ditemukan; pin belum dibuat (jalankan free-pi sekali lalu maint.sh)"
+fi
+
 bash "$H/.agent-rules/rules-guard.sh" || true
 
 echo "selesai. Verifikasi: sha256sum ~/.agent-rules/operator.AGENTS.md.master ~/.free-pi/agent/AGENTS.md"

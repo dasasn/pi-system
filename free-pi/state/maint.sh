@@ -88,6 +88,9 @@ elif [ -f "$PINNED" ] && [ -n "$PATCHER" ]; then
 	cp -f "$PINNED" "$TMP"
 	if node "$PATCHER" "$TMP" >/dev/null 2>&1 && cmp -s "$TMP" "$PINNED" && valid_bundle "$PINNED"; then
 		log "pinned bundle ok"
+	elif [ -s "$TMP" ] && valid_bundle "$TMP"; then
+		# patcher menambah langkah baru: adopsi hasil re-patch supaya pin tidak tertinggal
+		cp -f "$TMP" "$PINNED" && log "pinned bundle re-patched (langkah baru diterapkan)"
 	else
 		log "pinned bundle butuh re-patch (lewat jalur rebuild berikutnya)"
 	fi

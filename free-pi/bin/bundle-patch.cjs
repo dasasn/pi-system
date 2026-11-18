@@ -158,12 +158,14 @@ function patch(pathName) {
     applied.push("theme-ungu");
   }
 
-  // 8. No auto-update / no version check / no self-install (operator: matikan update diam-diam).
-  //    a) checkClientVersion() tidak pernah menghubungi /client-version dan selalu "ok".
-  const cv = 'async function checkClientVersion(baseUrl, cliVersion, fetchImpl = fetch, jwt) {';
-  if (s.includes(cv) && !s.includes('/* __NOUPD:cv */')) {
-    s = s.replace(cv, cv + '\n  return { action: "ok" }; /* __NOUPD:cv */', 1);
-    applied.push("no-version-check");
+  // 8. No auto-update / no self-install (operator: matikan update diam-diam).
+  //    a) /client-version TETAP dipanggil: katalog model (versionCheck.models) berasal dari situ.
+  //       Yang dimatikan hanya aksi update-nya: cabang "min"/"latest" dijadikan "ok" (lihat langkah 3),
+  //       jadi tidak ada paksa-update maupun tawaran update. Early-return lama (__NOUPD:cv) dicabut
+  //       karena membuat picker model kosong (hanya 1 model fallback).
+  if (s.includes('/* __NOUPD:cv */')) {
+    s = s.replace(/\n  return \{ action: "ok" \}; \/\* __NOUPD:cv \*\//g, '');
+    applied.push("cv-early-return-removed");
   }
   //    b) Self-update global (npm install -g) dan relaunch via npx @latest tidak pernah jalan.
   for (const sig of [
