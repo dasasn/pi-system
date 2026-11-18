@@ -161,12 +161,12 @@
     "hackcore": {
       "type": "local",
       "command": [
-        "/home/zia/.venvs/webhunter/bin/python",
-        "/home/zia/.config/opencode/mcp/hackcore/server.py"
+        "$HOME/.venvs/webhunter/bin/python",
+        "$HOME/.config/opencode/mcp/hackcore/server.py"
       ],
       "enabled": true,
       "environment": {
-        "PYTHONPATH": "/home/zia/.config/opencode/mcp/hackcore"
+        "PYTHONPATH": "$HOME/.config/opencode/mcp/hackcore"
       }
     }
   },

@@ -66,7 +66,7 @@ say "ganti path /home/<user>"
 while IFS= read -r f; do
   [ -f "$f" ] || continue
   case "$f" in *.png|*.jpg|*.svg|*.gz|*.zip) continue;; esac
-  sed -i -E 's#/home/<USER>#\$HOME#g' "$f" 2>/dev/null || true
+  sed -i -E 's#$HOME#\$HOME#g' "$f" 2>/dev/null || true
   sed -i -E "s#/home/$(id -un)#\$HOME#g; s#/home/[a-z][a-z0-9_-]*/#~/#g" "$f" 2>/dev/null || true
 done < /tmp/_files.txt
 
