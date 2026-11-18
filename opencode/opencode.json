@@ -1,0 +1,176 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "external_directory": "allow",
+    "edit": "allow",
+    "bash": "allow",
+    "webfetch": "allow"
+  },
+  "provider": {
+    "wusrouter": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "WusRouter",
+      "options": {
+        "baseURL": "https://wusrouter.com/v1",
+        "apiKey": "{env:WUSROUTER_API_KEY}",
+        "timeout": 600000,
+        "chunkTimeout": 120000
+      },
+      "models": {
+        "cohere/north-mini-code:free": {
+          "name": "✅ North Mini Code (free)"
+        },
+        "mimo-v2.5:free": {
+          "name": "✅ mimo-v2.5:free",
+          "tool_call": true,
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
+        },
+        "jailbreak/auto-models:free": {
+          "name": "✅ jailbreak/auto-models:free",
+          "tool_call": true,
+          "limit": {
+            "context": 131072,
+            "output": 32768
+          }
+        }
+      }
+    },
+    "ds-unfiltered": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "DeepSeek Unfiltered (WusRouter jailbreak)",
+      "options": {
+        "baseURL": "https://wusrouter.com/v1",
+        "apiKey": "{env:DS_UNFILTERED_API_KEY}",
+        "timeout": 600000
+      },
+      "models": {
+        "jailbreak/auto-models:free": {
+          "name": "✅ DeepSeek jailbreak (no refusal)",
+          "tool_call": true,
+          "limit": {
+            "context": 131072,
+            "output": 16384
+          }
+        }
+      }
+    },
+    "perch": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Perch (proxy lokal)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8788/v1",
+        "apiKey": "{env:PERCH_API_KEY}",
+        "timeout": 600000,
+        "chunkTimeout": 180000
+      },
+      "models": {
+        "perch": {
+          "name": "✅ Perch auto (hy4-flash-free, $0)",
+          "tool_call": true,
+          "reasoning": true,
+          "limit": {
+            "context": 1000000,
+            "output": 131072
+          }
+        },
+        "perch-pro": {
+          "name": "✅ Perch Pro (Roost)",
+          "tool_call": true,
+          "reasoning": true,
+          "limit": {
+            "context": 1000000,
+            "output": 131072
+          }
+        }
+      }
+    },
+    "freepi": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "free-pi (akun operator)",
+      "options": {
+        "baseURL": "https://api.freepi.ai/v1",
+        "apiKey": "{file:~/.config/opencode/.freepi-token}",
+        "timeout": 600000,
+        "chunkTimeout": 180000
+      },
+      "models": {
+        "particle": {
+          "name": "Particle-1 - 🔥 Free Unlimited: limited time"
+        },
+        "deepseek-v4.1-flash": {
+          "name": "DeepSeek V4.1 Flash - 🔥 Free Unlimited: limited time"
+        },
+        "glm-5.3-flash": {
+          "name": "GLM 5.3 Flash - 🔥 Free Unlimited: limited time"
+        },
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash - 🔥 Free Unlimited: limited time"
+        },
+        "abliterated-large-flash": {
+          "name": "Abliterated Large Flash - ~20x usage - at capacity for free users [defense]"
+        },
+        "abliterated-large-v2": {
+          "name": "Abliterated Large V2 - ~60x usage - at capacity for free users [defense]"
+        },
+        "deepseek-v4.1-flash-1017-ultrafast": {
+          "name": "DeepSeek V4.1 Flash 600tps - ~1.6x usage - at capacity for free users"
+        },
+        "deepseek-v4.1-flash-abliterated": {
+          "name": "DeepSeek V4.1 Flash Abliterated - ~20x usage - at capacity for free users [defense]"
+        },
+        "deepseek-v4-pro": {
+          "name": "DeepSeek V4 Pro - ~5.9x usage - at capacity for free users"
+        },
+        "gemma-4-uncensored": {
+          "name": "Gemma 4 Uncensored - ~20x usage - at capacity for free users [defense]"
+        },
+        "glm-4.7-flash-heretic": {
+          "name": "GLM 4.7 Flash Heretic - ~20x usage - at capacity for free users [defense]"
+        },
+        "hy4-flash": {
+          "name": "Hy4 Flash - ~0.2x usage"
+        },
+        "kimi-k3.1-pro": {
+          "name": "Kimi K3.1 Pro - premium credits - ~22x usage - at capacity for free users"
+        },
+        "mimo-v2.6-flash": {
+          "name": "MiMo V2.6 Flash (Xiaomi) - ~0.8x usage - at capacity for free users"
+        },
+        "qwen3.5-35b-darkbloom": {
+          "name": "Qwen3.5 35B (Darkbloom) - ~2.1x usage - at capacity for free users"
+        },
+        "qwen3.6-plus-uncensored": {
+          "name": "Qwen 3.6 Plus Uncensored - ~37x usage - at capacity for free users [defense]"
+        },
+        "solar-pro-4": {
+          "name": "Solar Pro 4 - ~1.2x usage - at capacity for free users"
+        },
+        "uncensored-1.2": {
+          "name": "Uncensored 1.2 - ~20x usage - at capacity for free users [defense]"
+        }
+      }
+    }
+  },
+  "instructions": [
+    "AGENTS.md"
+  ],
+  "mcp": {
+    "hackcore": {
+      "type": "local",
+      "command": [
+        "/home/zia/.venvs/webhunter/bin/python",
+        "/home/zia/.config/opencode/mcp/hackcore/server.py"
+      ],
+      "enabled": true,
+      "environment": {
+        "PYTHONPATH": "/home/zia/.config/opencode/mcp/hackcore"
+      }
+    }
+  },
+  "model": "freepi/deepseek-v4.1-flash",
+  "autoupdate": false,
+  "small_model": "freepi/glm-5.3-flash"
+}

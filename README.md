@@ -244,6 +244,42 @@ jadi bundle vendor tidak perlu ikut.
 
 ---
 
+## 11. OpenCode — aturan + provider sama seperti pi
+
+`install-opencode.sh` menyamakan opencode dengan pi dalam satu perintah:
+
+```bash
+bash install-opencode.sh            # pasang
+bash install-opencode.sh --dry-run  # lihat rencananya saja
+```
+
+Yang dipasang:
+
+| Bagian | Hasil |
+|---|---|
+| aturan operator | `~/.config/opencode/AGENTS.md` → symlink ke `~/AGENTS.md` (aturan v3.1, sha `70b34bf0…`) |
+| skills | `~/.config/opencode/skill_h` → `~/.agent-rules/skills` (91 `SKILL.md`) |
+| tema | `~/.config/opencode/themes/ungu.json` + `tui.json` → `"theme": "ungu"` (violet `#a97ce0`) |
+| provider | `freepi` → `https://api.freepi.ai/v1` (`@ai-sdk/openai-compatible`), 18 model |
+| token | disalin dari `~/.free-pi/agent/credentials.json` ke `~/.config/opencode/.freepi-token` (600), config memakai `{file:…}` — token tidak pernah masuk config/repo |
+| default model | `freepi/deepseek-v4.1-flash`, small `freepi/glm-5.3-flash` |
+
+Config lama tidak ditimpa: hanya provider `freepi` yang ditambahkan/diperbarui, sisanya
+(`wusrouter`, `ds-unfiltered`, `perch`, permission, mcp) tetap, dan tiap perubahan membuat
+backup `*.bak-<timestamp>`.
+
+Verifikasi:
+
+```bash
+opencode models | grep '^freepi/' | wc -l     # 18
+opencode run -m freepi/deepseek-v4.1-flash "Balas: ok"
+```
+
+Kalau token pi kedaluwarsa (login ulang), cukup jalankan ulang `install-opencode.sh` —
+token di `.freepi-token` ikut diperbarui.
+
+---
+
 ## 10. Troubleshooting
 
 | Gejala | Perbaikan |

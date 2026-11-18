@@ -92,3 +92,23 @@ cp ~/.free-pi/state/pinned/main-7sxf1v5b.js /tmp/x.js   # backup pin sekarang
 node ~/.free-pi/bin/bundle-patch.cjs $HOME/.nvm/versions/node/v22.23.4/lib/node_modules/free-pi-cli/dist/main-7sxf1v5b.js
 cp $HOME/.nvm/versions/node/v22.23.4/lib/node_modules/free-pi-cli/dist/main-7sxf1v5b.js ~/.free-pi/state/pinned/main-7sxf1v5b.js
 ```
+
+---
+
+## Koreksi patch (2026-11-18): /client-version tetap dipanggil
+
+Versi pertama patch no-update mematikan seluruh `checkClientVersion()` dengan
+`return { action: "ok" }` di baris pertama. Itu salah: katalog model picker berasal dari
+respons `/client-version` (`versionCheck.models` → `catalogModelsFor(opts)` →
+`buildRuntimeOptions`). Dengan early-return, sesi berikutnya hanya punya 1 model fallback
+(`MODEL_ID`).
+
+Patch sekarang (`bundle-patch.cjs` langkah 8a):
+- early-return `/* __NOUPD:cv */` dicabut (idempoten, `cv-early-return-removed`);
+- `/client-version` tetap dipanggil dengan JWT;
+- blok `compareVersions(...)` (aksi `block` / `notice`) diganti `return { action: "ok", ...extra }`
+  (langkah 3), jadi `min`/`latest` tidak pernah memaksa update atau memunculkan tawaran;
+- self-update, `/update`, dan Gravity pixel tetap mati (`__NOUPD:ru`, early-return, telem off).
+
+Bukti: bundle pin = dist = `3451151f0f4d5760…`, `grep -c 'action: "block"'` = 0,
+`grep -c __NOUPD:cv` = 0, dan `/client-version` mengembalikan 18 model.
