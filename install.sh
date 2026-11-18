@@ -37,6 +37,13 @@ chmod 444 "$H/.free-pi/agent/APPEND_SYSTEM.md"
 cp -a "$R/skills/." "$H/.agent-rules/skills/"
 cp -a "$R/hacktools/." "$H/hacktools/"
 
+# 4b. pi-ops (ledger kampanye + gate bukti)
+mkdir -p "$H/.local/bin"
+cp -f "$R/pi-ops/piops.py" "$H/.local/bin/piops" && chmod +x "$H/.local/bin/piops"
+mkdir -p "$H/.agent-rules/skills/pi-ops"
+cp -f "$R/pi-ops/SKILL.md" "$H/.agent-rules/skills/pi-ops/SKILL.md"
+cp -f "$R/pi-ops/piops.py" "$H/.agent-rules/skills/pi-ops/piops.py"
+
 # 5. systemd
 cp -f "$R/systemd/"* "$H/.config/systemd/user/" 2>/dev/null || true
 systemctl --user daemon-reload 2>/dev/null || true

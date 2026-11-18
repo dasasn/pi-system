@@ -304,6 +304,42 @@ membawa rahasia — tanpa butuh GitHub Actions (push workflow butuh token scope 
 
 ---
 
+## 13. pi-ops — ledger bukti (pengganti gaya prompt-heavy Hephaestus)
+
+`pi-ops/piops.py` = satu file Python (stdlib saja) yang mencatat setiap langkah ofensif ke
+SQLite dan **menolak status "ok" kalau artefak bukti tidak ada**. Dipasang oleh `install.sh`
+sebagai `/usr/local`-style `~/.local/bin/piops` + skill `~/.agent-rules/skills/pi-ops/SKILL.md`.
+
+```bash
+piops init <slug> --target <t> --profile web
+piops plan <slug>                                  # langkah berikut, deterministik
+piops run <slug> --tool nmap --phase recon -- nmap -Pn -sV <t>   # log + sha256 otomatis
+piops artifact <slug> --path <file> --kind dump
+piops done <slug> --step 1 --status ok             # GATE (exit 3 kalau tanpa bukti)
+piops finding <slug> --title "..." --severity high --evidence 3
+piops status <slug> | piops report <slug> --out laporan.md
+piops scan-tools                                   # indeks 100 tool + capability
+piops selftest                                     # 6/6 uji gate
+```
+
+### Bedanya dengan Hephaestus (Claude-oriented)
+
+| Aspek | Hephaestus (`D:\hephaestus`) | pi-ops |
+|---|---|---|
+| Bentuk | 18.158 md + 3.914 py, prompt-driven (`CLAUDE.md` 51 KB, 6 agent md) | 1 file python 520 baris + 1 SKILL.md |
+| Bukti | tersebar di `campaigns/*/` sebagai file lepas | SQLite: step ↔ artefak ↔ sha256 ↔ temuan |
+| Gate | tidak ada pemeriksaan otomatis | `done --status ok` **ditolak** tanpa artefak/hash valid |
+| Temuan | bisa ditulis bebas | wajib menunjuk id artefak yang ada di disk |
+| Playbook | instruksi bahasa natural | `PLAYBOOK` terstruktur (web/internal/ctf) + `plan` dihitung dari bukti |
+| Registry tool | manual | `scan-tools` (100 tool + capability tag) |
+| Uji mandiri | pytest terpisah (argus/cerberus) | `piops selftest` tanpa dependency |
+| Portabilitas | Claude + MCP + banyak subagent | jalan di Termux/WSL/Ubuntu, `PIOPS_ROOT` untuk isolasi |
+
+Prinsip: Hephaestus mengandalkan model mengikuti 51 KB instruksi; pi-ops memaksa lewat kode —
+kalau bukti tidak ada, perintahnya gagal.
+
+---
+
 ## 10. Troubleshooting
 
 | Gejala | Perbaikan |
