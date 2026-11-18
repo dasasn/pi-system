@@ -47,11 +47,28 @@ piops status <slug>
 piops report <slug> --out ~/.piops/campaigns/<slug>/notes/laporan.md
 ```
 
+
+## Peran (hasil port dari Hephaestus) + kapan eskalasi
+
+| Peran | Fase playbook | Aturan berhenti / eskalasi |
+|---|---|---|
+| `scout` | recon, exposure | `.env` atau `.git/config` ketemu → **STOP**, langsung `piops artifact` + eskalasi ke `anchor` |
+| `strike` | creds | cek kredensial default **dulu** (2 detik), baru spray; deteksi WAF sebelum tembak berulang |
+| `anchor` | exploit | pilih vektor termurah (versi → CVE → vektor file/config dulu, bukan brute) |
+| `hunter` | post | enum cron/due **sebelum** ubah apa pun; scan subnet internal wajib |
+| `navigator` | lateral | inventory host + panel (Proxmox/PVE) dulu, eksekusi setelah ada bukti reachability |
+| `roaster` | report | laporan hanya dari DB (`piops report`), bukan dari ingatan |
+
+Lihat semua: `piops playbook --profile web --roles --verbose`.
+
+Profil tema: `web` (default), `internal`, `ctf`. `piops plan <slug> --verbose` mencetak perintah
+contoh per langkah, lengkap dengan target yang sudah terisi.
+
 ## Aturan yang mengikat
 
-1. **Tidak ada "ok" tanpa artefak.** `piops done --status ok` keluar dengan kode 3 kalau
-   step tidak punya artefak atau hash berubah. Jangan akali dengan `--status empty` bila
-   sebenarnya belum dijalankan.
+1. **Tidak ada "ok" tanpa artefak DAN exit 0.** `piops done --status ok` keluar kode 3 kalau
+   step tidak punya artefak, artefaknya hilang/berubah hash, atau `exit_code` langkah itu bukan 0.
+   Jangan akali dengan `--status empty` bila sebenarnya belum dijalankan.
 2. **Temuan tanpa bukti = ditolak** (exit 2). Catat artefak dulu, baru `finding`.
 3. **Satu step = satu tool + satu log.** Kalau tool gagal, `piops run` mencatat `exit` asli;
    jangan menutupi dengan langkah baru yang mengaku berhasil.

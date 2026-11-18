@@ -328,11 +328,11 @@ piops selftest                                     # 6/6 uji gate
 |---|---|---|
 | Bentuk | 18.158 md + 3.914 py, prompt-driven (`CLAUDE.md` 51 KB, 6 agent md) | 1 file python 520 baris + 1 SKILL.md |
 | Bukti | tersebar di `campaigns/*/` sebagai file lepas | SQLite: step ↔ artefak ↔ sha256 ↔ temuan |
-| Gate | tidak ada pemeriksaan otomatis | `done --status ok` **ditolak** tanpa artefak/hash valid |
+| Gate | tidak ada pemeriksaan otomatis | `done --status ok` **ditolak** tanpa artefak, hash valid, dan exit 0 |
 | Temuan | bisa ditulis bebas | wajib menunjuk id artefak yang ada di disk |
-| Playbook | instruksi bahasa natural | `PLAYBOOK` terstruktur (web/internal/ctf) + `plan` dihitung dari bukti |
+| Playbook | instruksi bahasa natural | `PLAYBOOK` terstruktur (web 18 langkah / internal 9 / ctf 5) + `plan --verbose` (perintah contoh terisi target) + 6 peran `scout/anchor/strike/hunter/navigator/roaster` |
 | Registry tool | manual | `scan-tools` (100 tool + capability tag) |
-| Uji mandiri | pytest terpisah (argus/cerberus) | `piops selftest` tanpa dependency |
+| Uji mandiri | pytest terpisah (argus/cerberus) | `piops selftest` → **7/7** tanpa dependency |
 | Portabilitas | Claude + MCP + banyak subagent | jalan di Termux/WSL/Ubuntu, `PIOPS_ROOT` untuk isolasi |
 
 Prinsip: Hephaestus mengandalkan model mengikuti 51 KB instruksi; pi-ops memaksa lewat kode —
