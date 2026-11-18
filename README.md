@@ -280,6 +280,30 @@ token di `.freepi-token` ikut diperbarui.
 
 ---
 
+## 12. Gate rahasia sebelum push
+
+`scan-secrets.sh` memeriksa 5 hal dan **menggagalkan push** bila ada yang lolos:
+
+| Cek | Contoh yang ditolak |
+|---|---|
+| file kredensial | `credentials.json`, `.freepi-token`, `auth.json`, `id_rsa*`, `.netrc` |
+| private key nyata | header `BEGIN … PRIVATE KEY` + blok base64 ≥ 60 char (pola di dokumentasi tidak dihitung) |
+| token nyata | `sk-…`, `ghp_…`, `github_pat_…`, `AKIA…`, `xox…`, JWT `eyJ…` (nilai hanya dicetak 8 karakter) |
+| IP publik di `*.md` | apa pun di luar privat + `203.0.113.0/24`, `198.51.100.0/24` |
+| sintaks | `bash -n`, `py_compile`, `node --check` untuk semua script |
+
+Sekali pasang sebagai hook lokal:
+
+```bash
+git config core.hooksPath hooks      # push.sh melakukan ini otomatis
+bash scan-secrets.sh                 # jalankan manual kapan saja
+```
+
+`push.sh` menjalankan scan ini **sebelum** commit, jadi repo tidak bisa ter-push dalam keadaan
+membawa rahasia — tanpa butuh GitHub Actions (push workflow butuh token scope `workflow`).
+
+---
+
 ## 10. Troubleshooting
 
 | Gejala | Perbaikan |

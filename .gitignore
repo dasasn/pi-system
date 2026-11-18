@@ -33,3 +33,7 @@ SANITIZE.log
 .freepi-token
 .secrets/
 *.bak-*
+
+# artefak python
+__pycache__/
+*.pyc

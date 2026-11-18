@@ -9,6 +9,10 @@ T="$(head -1 "$TOKF")"
 USER_NAME="$(git config user.name || echo operator)"
 git config user.name "${GIT_NAME:-$USER_NAME}" >/dev/null
 
+echo "== 0. gate rahasia"
+git config core.hooksPath hooks 2>/dev/null || true
+bash scan-secrets.sh || { echo "   DIBATALKAN: scan-secrets gagal"; exit 1; }
+
 echo "== 1. sanitasi"
 bash sanitize-public.sh >/dev/null 2>&1 || true
 

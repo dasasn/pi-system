@@ -12,7 +12,8 @@ while true; do
     total_processed=0
     total_found=0
     
-    for log in ${LOG_DIR}/*.log 2>/dev/null; do
+    for log in "$LOG_DIR"/*.log; do
+        [ -f "$log" ] || continue
         if [ -f "$log" ]; then
             processed=$(grep -oE 'Normalized [0-9]+ targets' "$log" 2>/dev/null | tail -1 | grep -oE '[0-9]+' || echo 0)
             found=$(grep -oE 'Detected [0-9]+ cPanel/WHM targets' "$log" 2>/dev/null | tail -1 | grep -oE '[0-9]+' || echo 0)

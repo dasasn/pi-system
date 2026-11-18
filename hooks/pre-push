@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+# pre-push: tolak push bila ada kredensial/token nyata (lihat scan-secrets.sh)
+exec "$(git rev-parse --show-toplevel)/scan-secrets.sh"
