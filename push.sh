@@ -27,7 +27,7 @@ for url in $(git remote -v | awk '$3=="(push)"{print $2}'); do
   clean="${url#https://github.com/}"; clean="${clean%.git}"
   echo "   -> $clean"
   for try in 1 2 3; do
-    if git push "https://${clean%%/*}:$T@github.com/${clean}.git" main 2>&1 | tail -1; then break; fi
+    if git push "https://${clean%%/*}:$user@example.com/${clean}.git" main 2>&1 | tail -1; then break; fi
     sleep 3
   done
 done
