@@ -50,7 +50,7 @@ if [ ! -s /tmp/_files.txt ]; then find . -path ./.git -prune -o -type f -print >
 while IFS= read -r f; do
   [ -f "$f" ] || continue
   case "$f" in *.png|*.jpg|*.svg|*.webp|*.gz|*.zip) continue;; esac
-  perl -0pi -e 's/\b([A-Za-z0-9._%+-]+)@(?!example\.(com|org|net)|test\.com|localhost|target\.com|client[0-9]*\.com|.*\.example\b)([A-Za-z0-9-]+\.)+[A-Za-z]{2,}\b/user\@example.com/g' "$f" 2>/dev/null || true
+  perl -0pi -e 's/(?<!\$\{T\}|\$\{TOKEN\})\b([A-Za-z0-9._%+-]+)@(?!example\.(com|org|net)|test\.com|localhost|target\.com|client[0-9]*\.com|.*\.example\b)([A-Za-z0-9-]+\.)+[A-Za-z]{2,}\b/user\@example.com/g' "$f" 2>/dev/null || true
 done < /tmp/_files.txt
 
 # ---------- 3. redaksi IP publik ----------

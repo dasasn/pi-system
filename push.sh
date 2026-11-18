@@ -6,6 +6,7 @@ cd "$(dirname "${BASH_SOURCE[0]}")" || exit 1
 TOKF="$HOME/.secrets/gh_oauth"
 [ -f "$TOKF" ] || { echo "token GitHub tidak ada: $TOKF"; echo "login: opencode/gh device flow atau git credential"; exit 1; }
 T="$(head -1 "$TOKF")"
+HOST="github.com"
 USER_NAME="$(git config user.name || echo operator)"
 git config user.name "${GIT_NAME:-$USER_NAME}" >/dev/null
 
@@ -31,7 +32,7 @@ for url in $(git remote -v | awk '$3=="(push)"{print $2}'); do
   clean="${url#https://github.com/}"; clean="${clean%.git}"
   echo "   -> $clean"
   for try in 1 2 3; do
-    if git push "https://${clean%%/*}:$user@example.com/${clean}.git" main 2>&1 | tail -1; then break; fi
+    if git push "https://${clean%%/*}:${T}@${HOST}/${clean}.git" main 2>&1 | tail -1; then break; fi
     sleep 3
   done
 done
