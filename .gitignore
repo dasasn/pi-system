@@ -28,3 +28,8 @@ proof/
 # manifest machine-specific (dibuat ulang oleh maint.sh)
 free-pi/state/manifest.sha256
 SANITIZE.log
+
+# token opencode & backup config lokal
+.freepi-token
+.secrets/
+*.bak-*
